@@ -1,0 +1,16 @@
+195bae6d36fd80cb25ada65c438c0c80 *DESCRIPTION
+6dbc932039407821bc08acfacae15cc4 *LICENSE
+e02b0dde080cbe1c327a2d622ea09d45 *NAMESPACE
+9653aebb485b308e4ea9940bb4f76aaa *R/IP2whois.R
+290a9e498d6fb0a108d95a34f67b2d37 *man/get_domain_extension.Rd
+2a25d4d7ff41e9e8e0481419a96692c3 *man/get_normal_text.Rd
+0e8bd640d85e0cbd5feb92672d8ad6cd *man/get_punycode.Rd
+c6610edb853b72fbe11c909d39991c37 *man/lookup.Rd
+d5af46d75621956304dda45e4e133329 *man/lookupAdmin.Rd
+156001de1165ad188a7e5ebdfc8c6f2e *man/lookupBilling.Rd
+755b8280eb2734d9bd87c81ab3ca28dc *man/lookupNameservers.Rd
+760574407565f659cde085167d1ba2e1 *man/lookupRegistrant.Rd
+8684731568343ea1bbb860a87c2a09f9 *man/lookupRegistrar.Rd
+4d7650e75b8622d56a1af94d9cb4dbcf *man/lookupTech.Rd
+0a508780a430e070041fbbef73ee5df3 *man/lookupWhoisServer.Rd
+4d89858537dab8b134356a34a57be226 *man/set_api_key.Rd
