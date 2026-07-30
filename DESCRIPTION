@@ -1,7 +1,7 @@
 Package: ip2whois
 Type: Package
 Title: Lookup 'WHOIS' Information for a Particular Domain
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: person(family = "IP2WHOIS",
                     role = c("aut", "cre"),
                     email = "support@ip2whois.com")
@@ -15,7 +15,7 @@ SystemRequirements: IP2WHOIS Python library
         <https://github.com/ip2whois/ip2whois-python>
 RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2024-10-31 23:24:58 UTC; ooi18
+Packaged: 2026-07-30 05:20:05 UTC; ooi18
 Author: IP2WHOIS [aut, cre]
 Repository: CRAN
-Date/Publication: 2024-11-04 12:40:06 UTC
+Date/Publication: 2026-07-30 12:50:16 UTC

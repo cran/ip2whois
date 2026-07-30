@@ -1,3 +1,5 @@
+.ip2whois_env <- new.env(parent = emptyenv())
+
 #' @title Set IP2Location.io API key
 #'
 #' @description Set IP2Location.io API key for lookup. Free API key can be obtained from <https://www.ip2location.io/sign-up?ref=1/>
@@ -11,9 +13,23 @@
 #'
 
 set_api_key <- function(api_key) {
-  py_run_string("import ip2whois")
-  apikeyString = paste("ip2whois_init = ip2whois.Api('", api_key , "')", sep = "")
-  py_run_string(apikeyString)
+  .ip2whois_env$ip2whois <- reticulate::import("ip2whois")
+  .ip2whois_env$ip2whois_init <- .ip2whois_env$ip2whois$Api(api_key)
+}
+
+#' @title Get the current IP2WHOIS API object
+#'
+#' @description Retrieve the Python \code{ip2whois.Api} object created by \code{set_api_key()}. Internal helper used by the lookup functions to ensure an API key has been set before making a request.
+#' @return Return the Python ip2whois API object used for lookups
+#' @keywords internal
+#' @noRd
+#'
+
+.getInit <- function() {
+  if (is.null(.ip2whois_env$ip2whois_init)) {
+    stop("API key not set. Please call set_api_key() first.")
+  }
+  .ip2whois_env$ip2whois_init
 }
 
 #' @title Lookup for WHOIS information
@@ -22,7 +38,6 @@ set_api_key <- function(api_key) {
 #' @param domain domain name to lookup for
 #' @return Return the WHOIS information about the domain
 #' @import reticulate
-#' @import jsonlite
 #' @export
 #' @examples \dontrun{
 #' lookup("example.com")
@@ -30,11 +45,9 @@ set_api_key <- function(api_key) {
 #'
 
 lookup <- function(domain){
-  py_run_string("import json")
-  address = paste("rec = ip2whois_init.lookup('", domain, "')", sep = "")
-  py_run_string(address)
-  py_run_string("j = json.dumps(rec)")
-  result = fromJSON(py$j)
+  ip2whois_init <- .getInit()
+  rec <- ip2whois_init$lookup(domain)
+  result <- reticulate::py_to_r(rec)
   return(result)
 }
 
@@ -51,11 +64,8 @@ lookup <- function(domain){
 #'
 
 lookupRegistrar <- function(domain){
-  address = paste("rec = ip2whois_init.lookup('", domain, "')", sep = "")
-  py_run_string(address)
-  py_run_string("registrar = rec['registrar']")
-  result_from_python <- py$registrar
-  return(result_from_python)
+  rec <- lookup(domain)
+  return(rec$registrar)
 }
 
 #' @title Lookup for registrant information
@@ -71,11 +81,8 @@ lookupRegistrar <- function(domain){
 #'
 
 lookupRegistrant <- function(domain){
-  address = paste("rec = ip2whois_init.lookup('", domain, "')", sep = "")
-  py_run_string(address)
-  py_run_string("registrant = rec['registrant']")
-  result_from_python <- py$registrant
-  return(result_from_python)
+  rec <- lookup(domain)
+  return(rec$registrant)
 }
 
 #' @title Lookup for admin information
@@ -91,11 +98,8 @@ lookupRegistrant <- function(domain){
 #'
 
 lookupAdmin <- function(domain){
-  address = paste("rec = ip2whois_init.lookup('", domain, "')", sep = "")
-  py_run_string(address)
-  py_run_string("admin = rec['admin']")
-  result_from_python <- py$admin
-  return(result_from_python)
+  rec <- lookup(domain)
+  return(rec$admin)
 }
 
 #' @title Lookup for tech information
@@ -111,11 +115,8 @@ lookupAdmin <- function(domain){
 #'
 
 lookupTech <- function(domain){
-  address = paste("rec = ip2whois_init.lookup('", domain, "')", sep = "")
-  py_run_string(address)
-  py_run_string("tech = rec['tech']")
-  result_from_python <- py$tech
-  return(result_from_python)
+  rec <- lookup(domain)
+  return(rec$tech)
 }
 
 #' @title Lookup for billing information
@@ -131,11 +132,8 @@ lookupTech <- function(domain){
 #'
 
 lookupBilling <- function(domain){
-  address = paste("rec = ip2whois_init.lookup('", domain, "')", sep = "")
-  py_run_string(address)
-  py_run_string("billing = rec['billing']")
-  result_from_python <- py$billing
-  return(result_from_python)
+  rec <- lookup(domain)
+  return(rec$billing)
 }
 
 #' @title Lookup for nameservers information
@@ -151,11 +149,8 @@ lookupBilling <- function(domain){
 #'
 
 lookupNameservers <- function(domain){
-  address = paste("rec = ip2whois_init.lookup('", domain, "')", sep = "")
-  py_run_string(address)
-  py_run_string("nameservers = rec['nameservers']")
-  result_from_python <- py$nameservers
-  return(result_from_python)
+  rec <- lookup(domain)
+  return(rec$nameservers)
 }
 
 #' @title Lookup for whois server information
@@ -171,11 +166,8 @@ lookupNameservers <- function(domain){
 #'
 
 lookupWhoisServer <- function(domain){
-  address = paste("rec = ip2whois_init.lookup('", domain, "')", sep = "")
-  py_run_string(address)
-  py_run_string("whois_server = rec['whois_server']")
-  result_from_python <- py$whois_server
-  return(result_from_python)
+  rec <- lookup(domain)
+  return(rec$whois_server)
 }
 
 
@@ -190,11 +182,11 @@ lookupWhoisServer <- function(domain){
 #' get_punycode("täst.de")
 #' }
 #'
+
 get_punycode <- function(domain){
-  get_punycode_string = paste("result = ip2whois_init.getPunycode('", domain, "')", sep = "")
-  py_run_string(get_punycode_string)
-  result_from_python <- py$result
-  return(result_from_python)
+  ip2whois_init <- .getInit()
+  result <- ip2whois_init$getPunycode(domain)
+  return(reticulate::py_to_r(result))
 }
 
 #' @title Get Normat Text from a punycode
@@ -208,11 +200,11 @@ get_punycode <- function(domain){
 #' get_normal_text("xn--tst-qla.de")
 #' }
 #'
+
 get_normal_text <- function(domain){
-  get_normal_text_string = paste("result = ip2whois_init.getNormalText('", domain, "')", sep = "")
-  py_run_string(get_normal_text_string)
-  result_from_python <- py$result
-  return(result_from_python)
+  ip2whois_init <- .getInit()
+  result <- ip2whois_init$getNormalText(domain)
+  return(reticulate::py_to_r(result))
 }
 
 #' @title Get domain extension (gTLD or ccTLD) from URL or domain name
@@ -226,11 +218,9 @@ get_normal_text <- function(domain){
 #' get_domain_extension("example.com")
 #' }
 #'
+
 get_domain_extension <- function(url){
-  get_domain_extension_string = paste("result = ip2whois_init.getDomainExtension('", url, "')", sep = "")
-  py_run_string(get_domain_extension_string)
-  result_from_python <- py$result
-  return(result_from_python)
+  ip2whois_init <- .getInit()
+  result <- ip2whois_init$getDomainExtension(url)
+  return(reticulate::py_to_r(result))
 }
-
-
